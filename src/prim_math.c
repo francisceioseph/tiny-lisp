@@ -1,7 +1,6 @@
 #include <stdio.h>
 
 #include "arithmetic.h"
-#include "object.h"
 #include "prim_math.h"
 
 Object* primitive_add(Object* args) {

@@ -1,5 +1,6 @@
-#include "prim_logic.h"
 #include <string.h>
+
+#include "prim_logic.h"
 
 Object* primitive_equals(Object* args) {
     if (!is_list(args)) {

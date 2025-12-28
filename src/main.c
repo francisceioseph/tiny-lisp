@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "builtins.h"
 #include "env.h"
 #include "eval.h"
 #include "lexer.h"
@@ -9,6 +8,9 @@
 #include "parser.h"
 
 #include "prim_math.h"
+#include "prim_logic.h"
+#include "prim_io.h"
+#include "prim_list.h"
 
 int main() {
     char input[1024];
@@ -25,6 +27,7 @@ int main() {
     env_define(global_env, "t", make_true());
     
     env_define(global_env, "print", make_primitive(primitive_print));
+
     env_define(global_env, "list", make_primitive(primitive_list));
     env_define(global_env, "car", make_primitive(primitive_car));
     env_define(global_env, "cdr", make_primitive(primitive_cdr));
