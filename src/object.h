@@ -1,0 +1,59 @@
+#ifndef OBJECT_H
+#define OBJECT_H
+
+#include <stddef.h>
+#include "env.h"
+
+struct Environment;
+
+typedef struct Object Object;
+typedef struct Environment Environment;
+
+typedef Object* (*PrimitiveFunc)(Object* args);
+
+typedef enum {
+    TYPE_NUMBER,
+    TYPE_SYMBOL,
+    TYPE_LIST,
+    TYPE_PRIMITIVE,
+    TYPE_LAMBDA,
+    TYPE_STRING,
+    TYPE_NIL
+} ObjectType ;
+
+struct Object {
+    ObjectType type;
+    union {
+        float number;
+        char* symbol;
+        char* string;
+        struct {
+            struct Object* car;
+            struct Object* cdr;
+        } list;
+        struct {
+            struct Object* params;
+            struct Object* body;
+            struct Environment* env;
+        } lambda;
+        PrimitiveFunc primitive;
+    } data;
+};
+
+
+Object* make_number(float value);
+Object* make_symbol(const char* value);
+Object* make_primitive(PrimitiveFunc func);
+Object* make_lambda(Object* params, Object* body, Environment* env);
+Object* make_string(const char* value);
+Object* make_true();
+
+Object* cons(Object* car, Object* cdr);
+
+void print_object(Object* obj);
+void free_object(Object* obj);
+Object* copy_object(Object* obj);
+
+extern Object* nil;
+
+#endif
