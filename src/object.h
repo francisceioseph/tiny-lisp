@@ -42,7 +42,9 @@ struct Object {
 };
 
 bool is_number(Object* obj);
+bool is_symbol(Object* obj);
 bool is_list(Object* obj);
+bool is_string(Object* obj);
 bool is_nil(Object* obj);
 
 Object* make_number(float value);

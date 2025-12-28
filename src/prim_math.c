@@ -84,3 +84,65 @@ Object* primitive_div(Object* args) {
 
     return fold_list(operation_div, rest, initial_val);
 }
+
+Object* primitive_min(Object* args) {
+    if (!is_list(args)) {
+        return nil;
+    }
+
+    Object* first = args->data.list.car;
+    
+    if (!is_number(first)) {
+        return nil;
+    }
+    
+    float min_val = first->data.number;
+    Object* rest = args->data.list.cdr;
+
+    while (is_list(rest)) {
+        Object* target = rest->data.list.car;
+
+        if (!is_number(target)) {
+            return nil;
+        }
+
+        if (target->data.number < min_val) {
+            min_val = target->data.number;
+        }
+
+        rest = rest->data.list.cdr;
+    }
+
+    return make_number(min_val);
+}
+
+Object* primitive_max(Object* args) {
+    if (!is_list(args)) {
+        return nil;
+    }
+
+    Object* first = args->data.list.car;
+    
+    if (!is_number(first)) {
+        return nil;
+    }
+    
+    float max_val = first->data.number;
+    Object* rest = args->data.list.cdr;
+
+    while (is_list(rest)) {
+        Object* target = rest->data.list.car;
+
+        if (!is_number(target)) {
+            return nil;
+        }
+
+        if (target->data.number > max_val) {
+            max_val = target->data.number;
+        }
+
+        rest = rest->data.list.cdr;
+    }
+
+    return make_number(max_val);
+}

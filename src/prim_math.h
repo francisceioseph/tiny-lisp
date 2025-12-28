@@ -8,4 +8,7 @@ Object* primitive_sub(Object* args);
 Object* primitive_mul(Object* args);
 Object* primitive_div(Object* args);
 
+Object* primitive_min(Object* args);
+Object* primitive_max(Object* args);
+
 #endif

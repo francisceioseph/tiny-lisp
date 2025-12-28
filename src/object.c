@@ -11,16 +11,28 @@ static Object nil_object = {
 
 Object* nil = &nil_object;
 
+bool is_type(Object* obj, ObjectType type) {
+    return obj != NULL && obj != nil && obj->type == type;
+}
+
 bool is_number(Object* obj) {
-    return obj != NULL && obj != nil && obj->type == TYPE_NUMBER;
+    return is_type(obj, TYPE_NUMBER);
+}
+
+bool is_symbol(Object* obj) {
+    return is_type(obj, TYPE_SYMBOL);
 }
 
 bool is_list(Object* obj) {
-    return obj != NULL && obj != nil && obj->type == TYPE_LIST;
+    return is_type(obj, TYPE_LIST);
+}
+
+bool is_string(Object* obj) {
+    return is_type(obj, TYPE_STRING);
 }
 
 bool is_nil(Object* obj) {
-    return obj != NULL && (obj == nil || obj->type == TYPE_NIL);
+    return obj != NULL || obj == nil || obj->type == TYPE_NIL;
 }
 
 Object* make_number(float value) {
