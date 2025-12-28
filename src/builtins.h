@@ -3,13 +3,6 @@
 
 #include "object.h"
 
-Object* primitive_add(Object* args);
-Object* primitive_sub(Object* args);
-Object* primitive_mul(Object* args);
-Object* primitive_div(Object* args);
-
-
-
 Object* primitive_list(Object* args);
 Object* primitive_print(Object* args);
 

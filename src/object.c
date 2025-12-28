@@ -1,6 +1,7 @@
 #include "object.h"
 #include "env.h"
 #include "string.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -9,6 +10,18 @@ static Object nil_object = {
 };
 
 Object* nil = &nil_object;
+
+bool is_number(Object* obj) {
+    return obj != NULL && obj != nil && obj->type == TYPE_NUMBER;
+}
+
+bool is_list(Object* obj) {
+    return obj != NULL && obj != nil && obj->type == TYPE_LIST;
+}
+
+bool is_nil(Object* obj) {
+    return obj != NULL && (obj == nil || obj->type == TYPE_NIL);
+}
 
 Object* make_number(float value) {
     Object* obj = malloc(sizeof(Object));

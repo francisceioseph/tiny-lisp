@@ -1,6 +1,7 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+#include <stdbool.h>
 #include <stddef.h>
 #include "env.h"
 
@@ -40,6 +41,9 @@ struct Object {
     } data;
 };
 
+bool is_number(Object* obj);
+bool is_list(Object* obj);
+bool is_nil(Object* obj);
 
 Object* make_number(float value);
 Object* make_symbol(const char* value);

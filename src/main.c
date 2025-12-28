@@ -8,6 +8,8 @@
 #include "object.h"
 #include "parser.h"
 
+#include "prim_math.h"
+
 int main() {
     char input[1024];
 
