@@ -7,12 +7,12 @@
 
 #include "lexer.h"
 
-static size_t pos(Lexer* l) {
-    return l->pos;
+char peek(Lexer* l) {
+    return l->input[l->pos];
 }
 
-static char peek(Lexer* l) {
-    return l->input[l->pos];
+static size_t pos(Lexer* l) {
+    return l->pos;
 }
 
 static char advance(Lexer* l) {
@@ -27,7 +27,7 @@ static size_t len(size_t start, size_t end) {
     return end - start;
 }
 
-static void skip_junk(Lexer* l) {
+void skip_junk(Lexer* l) {
     while (true) {
         if (isspace(peek(l))) {
             advance(l);

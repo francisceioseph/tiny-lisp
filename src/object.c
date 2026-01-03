@@ -32,7 +32,7 @@ bool is_string(Object* obj) {
 }
 
 bool is_nil(Object* obj) {
-    return obj != NULL || obj == nil || obj->type == TYPE_NIL;
+    return obj == NULL || obj == nil || obj->type == TYPE_NIL;
 }
 
 Object* make_number(float value) {
@@ -149,29 +149,38 @@ void print_object(Object* obj) {
 }
 
 void free_object(Object* obj) {
-    if(obj == NULL || obj->type == TYPE_NIL) {
-        return;
+    Object* target = obj;
+
+    while (!is_nil(target)) {
+        Object* next_target = NULL;
+
+        switch (target->type) {
+            case TYPE_SYMBOL:
+                free(target->data.symbol);
+                break;
+    
+            case TYPE_STRING:
+                free(target->data.string);
+                break;
+    
+            case TYPE_LIST:
+                free_object(target->data.list.car);
+                next_target = target->data.list.cdr;
+                break;
+                
+            default:
+                break;
+        }
+    
+        Object* current = target;
+        target = next_target;
+
+        free(current);
+        
+        if (is_nil(target)) {
+            break;
+        }
     }
-
-    switch (obj->type) {
-        case TYPE_SYMBOL:
-            free(obj->data.symbol);
-            break;
-
-        case TYPE_STRING:
-            free(obj->data.string);
-            break;
-
-        case TYPE_LIST:
-            free_object(obj->data.list.car);
-            free_object(obj->data.list.cdr);
-            break;
-            
-        default:
-            break;
-    }
-
-    free(obj);
 }
 
 Object* copy_object(Object* obj) {

@@ -9,6 +9,9 @@ typedef struct {
 } Lexer;
 
 
+char peek(Lexer* l);
+void skip_junk(Lexer* l) ;
+
 char* get_token(Lexer* lexer);
 
 #endif
