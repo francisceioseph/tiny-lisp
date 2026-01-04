@@ -4,4 +4,4 @@
         ((= n 1) 1) 
         (1 (+ (fib (- n 1)) (fib (- n 2)))))))
 
-(fib 10)              ; Deve retornar 55
+(print (fib 10))              ; Deve retornar 55
