@@ -24,6 +24,7 @@ typedef enum {
 
 struct Object {
     ObjectType type;
+    int ref_count;
     union {
         float number;
         char* symbol;
@@ -55,6 +56,9 @@ Object* make_string(const char* value);
 Object* make_true();
 
 Object* cons(Object* car, Object* cdr);
+
+Object* retain(Object* obj);
+void release(Object* obj);
 
 void print_object(Object* obj);
 void free_object(Object* obj);

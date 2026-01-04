@@ -1,12 +1,14 @@
-#include "object.h"
 #include "env.h"
 #include "string.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "object.h"
+
 static Object nil_object = {
-    .type = TYPE_NIL
+    .type = TYPE_NIL,
+    .ref_count = 0
 };
 
 Object* nil = &nil_object;
@@ -39,7 +41,9 @@ Object* make_number(float value) {
     Object* obj = malloc(sizeof(Object));
 
     obj->type = TYPE_NUMBER;
+    obj->ref_count = 0;
     obj->data.number = value;
+
     return obj;
 }
 
@@ -51,7 +55,9 @@ Object* make_symbol(const char* value) {
     Object* obj = malloc(sizeof(Object));
 
     obj->type = TYPE_SYMBOL;
+    obj->ref_count = 0;
     obj->data.symbol = strdup(value);
+
     return obj;
 }
 
@@ -59,13 +65,17 @@ Object* make_string(const char* value) {
     Object* obj = malloc(sizeof(Object));
 
     obj->type = TYPE_STRING;
+    obj->ref_count = 0;
     obj->data.string = strdup(value);
+
     return obj;
 }
 
 Object* make_primitive(PrimitiveFunc func) {
     Object* obj = malloc(sizeof(Object));
+    
     obj->type = TYPE_PRIMITIVE;
+    obj->ref_count = 0;
     obj->data.primitive = func;
 
     return obj;
@@ -75,9 +85,11 @@ Object* make_lambda(Object* params, Object* body, Environment* env){
     Object* obj = malloc(sizeof(Object));
 
     obj->type = TYPE_LAMBDA;
-    obj->data.lambda.body = copy_object(body);
-    obj->data.lambda.params = copy_object(params);
+    obj->ref_count = 0;
+    obj->data.lambda.body = retain(body);
+    obj->data.lambda.params = retain(params);
     obj->data.lambda.env = env;
+
     return obj;
 }
 
@@ -85,10 +97,33 @@ Object* cons(Object* car, Object* cdr) {
     Object* obj = malloc(sizeof(Object));
 
     obj->type = TYPE_LIST;
-    obj->data.list.car = car;
-    obj->data.list.cdr = cdr;
+    obj->ref_count = 0;
+    obj->data.list.car = retain(car);
+    obj->data.list.cdr = retain(cdr);
 
     return obj;
+}
+
+Object* retain(Object* obj) {
+    if (is_nil(obj)) {
+        return nil;
+    }
+
+    obj->ref_count++;
+    return obj;
+}
+
+void release(Object* obj) {
+    if (is_nil(obj)) {
+        return;
+    }
+
+    obj->ref_count--;
+
+    if (obj->ref_count <= 0) {
+        free_object(obj);
+        obj = NULL;
+    }
 }
 
 void print_object(Object* obj) {
@@ -149,37 +184,42 @@ void print_object(Object* obj) {
 }
 
 void free_object(Object* obj) {
-    Object* target = obj;
+    Object* current = obj;
 
-    while (!is_nil(target)) {
-        Object* next_target = NULL;
+    while (!is_nil(current)) {
+        Object* next = NULL;
 
-        switch (target->type) {
-            case TYPE_SYMBOL:
-                free(target->data.symbol);
+        switch (current->type) {
+            case TYPE_SYMBOL: 
+                free(current->data.symbol);
                 break;
-    
+
             case TYPE_STRING:
-                free(target->data.string);
+                free(current->data.string);
+
+            case TYPE_LIST: {
+                Object* car = obj->data.list.car;
+                Object* cdr = obj->data.list.cdr;
+
+                release(car);
+
+                if (!is_nil(cdr) && cdr->ref_count <= 0) {
+                    next = cdr;
+                } else {
+                    release(cdr);
+                }
+
                 break;
-    
-            case TYPE_LIST:
-                free_object(target->data.list.car);
-                next_target = target->data.list.cdr;
-                break;
-                
+            }
+
             default:
                 break;
         }
-    
-        Object* current = target;
-        target = next_target;
 
-        free(current);
-        
-        if (is_nil(target)) {
-            break;
-        }
+        Object* temp = current;
+        current = next;
+
+        free(temp);
     }
 }
 

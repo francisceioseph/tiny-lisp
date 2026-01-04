@@ -72,13 +72,11 @@ Object* eval(Object* obj, Environment* env) {
         }
 
         Object* proc = eval(obj->data.list.car, env);
-        if(proc == NULL || proc == nil) {
-            printf("Error: cannot evaluate procedure");
-            return nil;
-        }
-     
         Object* args = eval_list(obj->data.list.cdr, env);
         Object* result = apply(proc, args);
+
+        release(args);
+        release(proc);
 
         return result;
     }
@@ -87,13 +85,13 @@ Object* eval(Object* obj, Environment* env) {
 }
 
 Object* eval_list(Object* obj, Environment* env) {
-    if(obj->type == TYPE_NIL) {
+    if(is_nil(obj)) {
         return nil;
     }
 
     Object* first = eval(obj->data.list.car, env);
     Object* rest = eval_list(obj->data.list.cdr, env);
-
+    
     return cons(first, rest);
 }
 
@@ -123,7 +121,7 @@ Object* eval_define(Object* obj, Environment* env) {
 
     env_define(env, sym_obj->data.symbol, value);
     
-    return copy_object(value);
+    return retain(value);
 }
 
 Object* eval_if(Object* obj, Environment* env) {
@@ -242,7 +240,7 @@ Object* apply(Object* obj, Object* args) {
         printf("Error: Function is nil\n");
         return nil;
     }
-
+    
     if(obj->type == TYPE_PRIMITIVE) {
         return obj->data.primitive(args);
     }
@@ -260,8 +258,7 @@ Object* apply(Object* obj, Object* args) {
         Object* params = obj->data.lambda.params;
         Object* values = args;
 
-        while(params != nil && params->type == TYPE_LIST && 
-              values != nil && values->type == TYPE_LIST) {
+        while(is_list(params) && is_list(values)) {
             Object* sym = params->data.list.car;
             Object* val = values->data.list.car;
 

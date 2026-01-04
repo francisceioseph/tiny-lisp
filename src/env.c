@@ -17,11 +17,11 @@ void env_define(Environment* env, char* symbol, Object* value){
     Object* syms = env->symbols;
     Object* vals = env->values;
 
-    while (syms != nil && syms->type == TYPE_LIST) {
+    while (is_list(syms) && is_list(vals)) {
         Object* current_sym = syms->data.list.car;
         
         if(strcmp(current_sym->data.symbol, symbol) == 0) {
-            vals->data.list.car = copy_object(value);
+            vals->data.list.car = retain(value);
             return;
         }
 
@@ -30,7 +30,7 @@ void env_define(Environment* env, char* symbol, Object* value){
     }
 
     env->symbols = cons(make_symbol(symbol), env->symbols);
-    env->values = cons(copy_object(value), env->values);
+    env->values = cons(value, env->values);
 }
 
 Object* env_lookup(Environment* env, char* symbol) {
@@ -45,7 +45,7 @@ Object* env_lookup(Environment* env, char* symbol) {
 
             if (current_sym->type == TYPE_SYMBOL && 
                 strcmp(current_sym->data.symbol, symbol) == 0) {
-                return vals->data.list.car;
+                return retain(vals->data.list.car);
             }
 
             syms = syms->data.list.cdr;

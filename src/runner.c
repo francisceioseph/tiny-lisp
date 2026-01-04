@@ -34,7 +34,8 @@ void run_file(char* filename, Environment* env) {
 
         Object* result = eval(expression, env);
 
-        free_object(expression);
+        release(expression);
+        release(result);
     }
 
     free(source);

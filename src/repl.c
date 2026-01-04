@@ -34,7 +34,9 @@ void repl(Environment *global_env) {
             Object* result = eval(expression, global_env);
 
             print_object(result);            
-            free_object(expression);
+            
+            release(expression);
+            release(result);
         }
 
         free(input);
