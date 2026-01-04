@@ -7,6 +7,7 @@
 
 struct Environment;
 
+typedef struct Dictionary Dictionary ;
 typedef struct Object Object;
 typedef struct Environment Environment;
 
@@ -19,8 +20,13 @@ typedef enum {
     TYPE_PRIMITIVE,
     TYPE_LAMBDA,
     TYPE_STRING,
+    TYPE_DICT,
     TYPE_NIL
 } ObjectType ;
+
+struct Dictionary {
+    Object* pairs;
+};
 
 struct Object {
     ObjectType type;
@@ -38,6 +44,7 @@ struct Object {
             struct Object* body;
             struct Environment* env;
         } lambda;
+        Dictionary dict;
         PrimitiveFunc primitive;
     } data;
 };
@@ -46,6 +53,7 @@ bool is_number(Object* obj);
 bool is_symbol(Object* obj);
 bool is_list(Object* obj);
 bool is_string(Object* obj);
+bool is_dict(Object* obj);
 bool is_nil(Object* obj);
 
 Object* make_number(float value);
@@ -53,7 +61,11 @@ Object* make_symbol(const char* value);
 Object* make_primitive(PrimitiveFunc func);
 Object* make_lambda(Object* params, Object* body, Environment* env);
 Object* make_string(const char* value);
+Object* make_empty_dict();
 Object* make_true();
+
+Object* dict_get(Object* obj, Object* key);
+Object* dict_set(Object* obj, Object* key, Object* value);
 
 Object* cons(Object* car, Object* cdr);
 

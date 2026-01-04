@@ -21,7 +21,9 @@ void env_define(Environment* env, char* symbol, Object* value){
         Object* current_sym = syms->data.list.car;
         
         if(strcmp(current_sym->data.symbol, symbol) == 0) {
+            Object* old_val = vals->data.list.car;
             vals->data.list.car = retain(value);
+            release(old_val);
             return;
         }
 

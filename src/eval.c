@@ -92,7 +92,12 @@ Object* eval_list(Object* obj, Environment* env) {
     Object* first = eval(obj->data.list.car, env);
     Object* rest = eval_list(obj->data.list.cdr, env);
     
-    return cons(first, rest);
+    Object* result = cons(first, rest);
+
+    release(first);
+    release(rest);
+
+    return result;
 }
 
 Object* eval_define(Object* obj, Environment* env) {

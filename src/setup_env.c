@@ -1,7 +1,9 @@
 #include <math.h>
 
 #include "setup_env.h"
+#include "env.h"
 #include "object.h"
+#include "prim_dict.h"
 #include "prim_io.h"
 #include "prim_list.h"
 #include "prim_logic.h"
@@ -25,6 +27,10 @@ Environment* setup_global_env() {
     env_define(global_env, "car", make_primitive(primitive_car));
     env_define(global_env, "cdr", make_primitive(primitive_cdr));
     env_define(global_env, "cons", make_primitive(primitive_cons));
+
+    env_define(global_env, "make-dict", make_primitive(primitive_dict_make));
+    env_define(global_env, "dict-get", make_primitive(primitive_dict_get));
+    env_define(global_env, "dict-set!", make_primitive(primitive_dict_set));
 
     env_define(global_env, "=", make_primitive(primitive_equals));
     env_define(global_env, "<", make_primitive(primitive_less_than));
